@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Solves sliding puzzle game</title>
+
+  <style>
+    body {
+  font-family: sans-serif;
+  text-align: center;
+  background-color: #eaeaea;
+}
+
+#puzzle {
+  width: 600px;
+  height: 600px;
+  margin: 20px auto;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 4px;
+}
+
+.tile {
+  background-color: #3498db;
+  color: white;
+  font-size: 1.5em;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.empty {
+  background-color: #aaa;
+  cursor: default;
+}
+
+#controls {
+  margin-bottom: 10px;
+  font-size: 1.2em;
+}
+  </style>
+
+  
+</head>
+<body>
+  <!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>NumSlide</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h1>NumSlide</h1>
+  <div id="controls">
+    <span>Movimentos: <span id="moveCount">0</span></span>
+    <button onclick="resetPuzzle()">Reiniciar</button>
+  </div>
+  <div id="puzzle"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
+
+  <script>
+    const puzzle = document.getElementById("puzzle");
+const moveCountDisplay = document.getElementById("moveCount");
+
+const size = 6;
+let tiles = [];
+let moveCount = 0;
+
+function initTiles() {
+  tiles = [];
+  for (let i = 1; i < size * size; i++) {
+    tiles.push(i);
+  }
+  tiles.push(0); // espaço vazio
+  shuffle(tiles);
+  moveCount = 0;
+  updateMoveCount();
+}
+
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
+
+function render() {
+  puzzle.innerHTML = "";
+  tiles.forEach((value, index) => {
+    const tile = document.createElement("div");
+    tile.className = "tile";
+    if (value === 0) {
+      tile.classList.add("empty");
+    } else {
+      tile.textContent = value;
+      tile.addEventListener("click", () => move(index));
+    }
+    puzzle.appendChild(tile);
+  });
+}
+
+function move(index) {
+  const emptyIndex = tiles.indexOf(0);
+  const row = Math.floor(index / size);
+  const col = index % size;
+  const emptyRow = Math.floor(emptyIndex / size);
+  const emptyCol = emptyIndex % size;
+
+  const isAdjacent =
+    (row === emptyRow && Math.abs(col - emptyCol) === 1) ||
+    (col === emptyCol && Math.abs(row - emptyRow) === 1);
+
+  if (isAdjacent) {
+    [tiles[index], tiles[emptyIndex]] = [tiles[emptyIndex], tiles[index]];
+    moveCount++;
+    updateMoveCount();
+    render();
+    checkWin();
+  }
+}
+
+function updateMoveCount() {
+  moveCountDisplay.textContent = moveCount;
+}
+
+function checkWin() {
+  const isSolved = tiles.slice(0, tiles.length - 1).every((val, idx) => val === idx + 1);
+  if (isSolved && tiles[tiles.length - 1] === 0) {
+    setTimeout(() => alert(`Parabéns! Você resolveu o quebra-cabeça em ${moveCount} movimentos! 🎉`), 100);
+  }
+}
+
+function resetPuzzle() {
+  initTiles();
+  render();
+}
+
+initTiles();
+render();
+  </script>
+</body>
+</html>
